@@ -119,7 +119,8 @@ class svm():
         w = self.w
         x = [0, 10]
         c = [0, 1, -1]
-        plt.plot([x[0], x[1]], [line_eq(x[0], w, b), line_eq(x[1], w, b)])
+        plt.plot([x[0], x[1]], [line_eq(x[0], w, b), line_eq(x[1], w, b)],
+            label = "Max-Margin Hyperplane")
         plt.plot([x[0], x[1]], [line_eq(x[0], w, b, c[1]), 
             line_eq(x[1], w, b, c[1])], 'k--')
         plt.plot([x[0], x[1]], [line_eq(x[0], w, b, c[2]), 
