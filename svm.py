@@ -137,38 +137,33 @@ if __name__=="__main__":
     # plot initial points
     """ Example (w/visualization) of data analysis with above SVM. """
 
-
-    """ 6:06 PM: maybe have two different functions to plot both class 1
-        and class 2? """
     # Plot training points. Classes +1 = blue, -1 = red
-    def gen_train():
-        # key to not repeating - the repeat=False in the animation object.
-        for a,b in zip(x_train[:,0], x_train[:,1]):
+    def gen_train_class1():
+        for a,b in zip(x_train_c1[:,0], x_train_c1[:,1]):
             yield a,b
-        # plt.scatter(x_train_c1[:,0], x_train_c1[:,1], color='b')
-        # plt.scatter(x_train_c2[:,0], x_train_c2[:,1], color='r')
 
-    def plot_train(gen_train):
+    def plot_class1(gen_train):
         x, y = gen_train[0], gen_train[1]
         xdata.append(x)
         ydata.append(y)
-        if len(xdata) >= plot_train.count:
-            # set xdata, ydata to only be the latter half of points
-            xdata = xdata[0:int(len(xdata) / 2), 0]
-            xdata = xdata[0:int(len(xdata) / 2), 0]
-            line2.set_data(xdata, ydata)
-            return line2
         line.set_data(xdata, ydata)
         return line
 
-    # print latter half of training set ( )
-    def plot_train_2():
+    def gen_train_class2():
+        for c,d in zip(x_train_c2[:,0], x_train_c2[:,1]):
+            yield c,d
 
+    def plot_class2(gen_train):
+        q, r = gen_train[0], gen_train[1]
+        xdata2.append(q)
+        ydata2.append(r)
+        line2.set_data(xdata2, ydata2)
+        return line2
 
     xdata, ydata = [], []
-    plot_train.count = len(x_train_c1)
+    xdata2, ydata2 = [], []
 
-    # plot_train(x_train_c1, x_train_c2)
+    # plot_class1(x_train_c1, x_train_c2)
     fig = plt.figure()
     ax = fig.add_subplot(111)
     line, = ax.plot([], [], 'bo', ms=10)
@@ -176,8 +171,11 @@ if __name__=="__main__":
     ax.set_ylim(-10,10)
     ax.set_xlim(0,20)
 
-    ani = animation.FuncAnimation(fig, plot_train, gen_train, blit=False,\
+    ani = animation.FuncAnimation(fig, plot_class1, gen_train_class1, blit=False,\
          interval=1, repeat=False)
+    ani2 = animation.FuncAnimation(fig, plot_class2, gen_train_class2, blit=False,\
+         interval=1, repeat=False)
+
 
     # plt.xlabel('X values')
     # plt.ylabel('Y values')
