@@ -11,7 +11,7 @@
 # Sources: Primarily the Hamel book. Also found Mathieu Blondel's SVM code
 #   (https://gist.github.com/mblondel/586753) helpful in calculating
 #   the weights and bias for the SVM's fit() function.
-#
+# Python packages used: NumPy, Matplotlib, CVXOPT
 ###########################################################################
 
 
@@ -141,7 +141,7 @@ class svm():
                 plt.scatter(i[0], i[1], color='r', marker='x')
 
 ###########################################################################
-# Standard main() function for standalone (non-import) use.
+# main() function for standalone (non-import) use.
 # The following code generates two clusters (w/two labels, blue for +1 and
 # red for -1) of training data using NumPy's random.multivariate_normal()
 # function, and fits a SVM classifier to that dataset. Subsequently,
@@ -222,7 +222,7 @@ if __name__ == "__main__":
             plot_c2_test.set_data(xplt_test_c2, yplt_test_c2)
             return plot_c2_test
 
-    """ Example of data analysis/visualization with above SVM. """
+    """ Example of data analysis/visualization with SVM. """
 
     # Cluster centers, covariance matrix, and # of training data points.
     cluster_centers = [[3, 3], [7,  7]]
@@ -275,7 +275,7 @@ if __name__ == "__main__":
     clf.fit(x_train, y_train)
     print "Weight vector: %s\nBias: %s" % (clf.w, clf.bias)
 
-    # Generate test points & predictions
+    # Generate test points & predictions.
     # n_test: # test points == # of training points
     # mean_test: test points centered at average of train. cluster centers
     # cov_test: minimal covariance, since need linearly separable data.
@@ -288,7 +288,9 @@ if __name__ == "__main__":
     predictions_idx = np.array([(idx, predict)
         for idx, predict in enumerate(clf.predict(x_test))])
 
-    # Visualize results, and write to stdout
+    # Visualize results, and write to stdout.
+    # animation.FuncAnimation's interval attribute is the # of milliseconds
+    # between animation events, i.e. plotting points.
     anim_train = animation.FuncAnimation(fig, plot_train, 
         gen_train, blit=False,interval=1, repeat=False)
     anim_test = animation.FuncAnimation(fig, plot_test, 
