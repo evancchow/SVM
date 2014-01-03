@@ -103,22 +103,18 @@ class svm():
         time.sleep(0.1)
         plt.pause(0.0001)   
     
-    # Plots testpoints, colorcoding Blue/Red for classes 1/2 given predictions. 
+    # Plots testpoints, colorcoding Blue/Red for classes 1/2 given predictions.
+    # Built-in function. Not used for the below main() but useful for importing.
     def plot_predictions(self, testpoints, predictions):
         for idx, i in enumerate(testpoints):
             if predictions[idx] >= 0: 
                 plt.scatter(i[0],i[1],color='b',marker='x')
                 plt.draw()
-                time.sleep(0.1)
-                plt.pause(0.0001)  
             else:
                 plt.scatter(i[0],i[1],color='r',marker='x')
                 plt.draw()
-                time.sleep(0.1)
-                plt.pause(0.0001)  
 
 if __name__=="__main__":
-    """ Example (w/visualization) of data analysis with above SVM. """
 
     # Generate n training data points (classes c1, c2) w/specified centers.
     means_possible = [[3,3],[7,7]]
@@ -132,69 +128,74 @@ if __name__=="__main__":
     y_train_c2 = (np.ones(n) * -1)
     x_train = np.vstack((x_train_c1, x_train_c2))
     y_train = np.hstack((y_train_c1,y_train_c2))
+    # print "X train shape:", x_train.shape
+    # print "Y train shape:", y_train.shape
+    # print "X train", x_train
+    # print "Y train", y_train
 
-    # Plot training points. Classes +1 = blue, -1 = red
-    def gen_train_class1():
-        for a,b in zip(x_train_c1[:,0], x_train_c1[:,1]):
-            yield a,b
+    # local function to random order of rows in x_train, y_train.
+    def randomize(x_train, y_train):
+        aggregated = np.concatenate((x_train, y_train.T.reshape(-1,1)), axis=1)
+        np.random.shuffle(aggregated)
+        return aggregated[:,0:2], aggregated[:,2]
 
-    def plot_class1(gen_train):
-        x, y = gen_train[0], gen_train[1]
-        x_data_c1.append(x)
-        y_data_c1.append(y)
-        line_c1.set_data(x_data_c1, y_data_c1)
-        return line_c1
+    x_train, y_train = randomize(x_train, y_train)
 
-    def gen_train_class2():
-        for c,d in zip(x_train_c2[:,0], x_train_c2[:,1]):
-            yield c,d
+    y_train_idx = np.array([(idx, predict)
+        for idx, predict in enumerate(y_train)])
+    # print "X train shape:", x_train.shape
+    # print "Y train shape:", y_train.shape
+    # print "X train", x_train[0:10]
+    # print "Y train", y_train[0:10]
 
-    def plot_class2(gen_train):
-        q, r = gen_train[0], gen_train[1]
-        x_data_c2.append(q)
-        y_data_c2.append(r)
-        line_c2.set_data(x_data_c2, y_data_c2)
-        return line_c2
+    # sys.exit("Pausing for now\n")
 
-    def gen_testpoints(): # maybe go to a, b directly from multivariate normal
+    """ Example of data visualization with above SVM. """
+
+    # Read training points. Classes +1 = blue, -1 = red
+    def gen_train():
+        for a, b, idx, predict in zip(x_train[:,0], x_train[:,1],
+            y_train_idx[:,0], y_train_idx[:,1]):
+            yield a, b, idx, predict
+
+    # Plot training points based on class.
+    def plot_train(gen_train):
+        a, b, idx, predict = gen_train[0], gen_train[1], gen_train[2], gen_train[3]
+        if predict == 1:
+            x_data_c1.append(a)
+            y_data_c1.append(b)
+            plot_c1.set_data(x_data_c1, y_data_c1)
+            return plot_c1
+        elif predict == -1:
+            x_data_c2.append(a)
+            y_data_c2.append(b)
+            plot_c2.set_data(x_data_c2, y_data_c2)
+            return plot_c2
+
+    # Read test points. Classes +1 = blue, -1 = red
+    def gen_testpoints():
         for e,f, idx, prediction in zip(x_test[:,0], x_test[:,1], 
-            predictions[:,0], predictions[:,1]):
+            predictions_idx[:,0], predictions_idx[:,1]):
             yield e,f, idx, prediction
 
-    def plot_testpoints_c1(gen_test):
+    # Plot test points based on class.
+    def plot_testpoints(gen_test):
         s, t, idx, predict = gen_test[0], gen_test[1], gen_test[2], gen_test[3]
         if predict == 1:
-            x_data_test_c1.append(s)
-            y_data_test_c1.append(t)
-            line_test_c1.set_data(x_data_test_c1, y_data_test_c1)
-        return line_test_c1
-
-    def plot_testpoints_c2(gen_test):
-        u, v, idx, predict = gen_test[0], gen_test[1], gen_test[2], gen_test[3]
-        if predict == -1:
-            x_data_test_c2.append(u)
-            y_data_test_c2.append(v)
-            line_test_c2.set_data(x_data_test_c2, y_data_test_c2)
-        return line_test_c2
-
-    # Plots testpoints, colorcoding Blue/Red for classes 1/2 given predictions. 
-    # def plot_predictions(self, testpoints, predictions):
-    #     for idx, i in enumerate(testpoints):
-    #         if predictions[idx] >= 0: 
-    #             plt.scatter(i[0],i[1],color='b',marker='x')
-    #             plt.draw()
-    #             time.sleep(0.1)
-    #             plt.pause(0.0001)  
-    #         else:
-    #             plt.scatter(i[0],i[1],color='r',marker='x')
-    #             plt.draw()
-    #             time.sleep(0.1)
-    #             plt.pause(0.0001)  
+            x_test_c1.append(s)
+            y_test_c1.append(t)
+            plot_c1_test.set_data(x_test_c1, y_test_c1)
+            return plot_c1_test
+        else:
+            x_test_c2.append(s)
+            y_test_c2.append(t)
+            plot_c2_test.set_data(x_test_c2, y_test_c2)
+            return plot_c2_test
 
     x_data_c1, y_data_c1 = [], []
     x_data_c2, y_data_c2 = [], []
-    x_data_test_c1, y_data_test_c1 = [], []
-    x_data_test_c2, y_data_test_c2 = [], []
+    x_test_c1, y_test_c1 = [], []
+    x_test_c2, y_test_c2 = [], []
 
     # plot_class1(x_train_c1, x_train_c2)
     fig = plt.figure()
@@ -204,51 +205,43 @@ if __name__=="__main__":
     plt.xlabel('X values')
     plt.ylabel('Y values')
     plt.title('SVM Data Classification')
-    line_c1, = ax.plot([], [], 'bo', ms=10)
-    line_c2, = ax.plot([], [], 'ro', ms=10)
-    line_test_c1, = ax.plot([], [], 'b+', ms=10)
-    line_test_c2, = ax.plot([], [], 'r+', ms=10)
+    plot_c1, = ax.plot([], [], 'bo', ms=10)
+    plot_c2, = ax.plot([], [], 'ro', ms=10)
+    plot_c1_test, = ax.plot([], [], 'b+', ms=10)
+    plot_c2_test, = ax.plot([], [], 'r+', ms=10)
 
-    # # Train our SVM classifier
+    # Train our SVM classifier
     clf = svm()
     clf.fit(x_train, y_train)
     print "Weight vector: %s\nBias: %s" % (clf.w, clf.bias)
 
-    # # Generate n test datapoints, centered at avg. of training centers.
+    # Generate n test datapoints, centered at avg. of training centers.
     n_test = 30
     mean_test = 0.5 * np.add(mean_train_c1,mean_train_c2)
     cov_test = [[1,0],[0,1]]
     a, b = np.random.multivariate_normal(mean_test, cov_test, n_test).T
     x_test = np.array([(a[i],b[i]) for i in xrange(n_test)])
-    predictions = np.array([(idx, predict) for idx, predict in enumerate(clf.predict(x_test))])
-    ani_c1 = animation.FuncAnimation(fig, plot_class1, gen_train_class1, blit=False,\
+    predictions = clf.predict(x_test)
+    predictions_idx = np.array([(idx, predict)
+        for idx, predict in enumerate(clf.predict(x_test))])
+
+    # Visualize results, and write to stdout
+    ani_train = animation.FuncAnimation(fig, plot_train, gen_train, blit=False,\
          interval=1, repeat=False)
-    ani_c2 = animation.FuncAnimation(fig, plot_class2, gen_train_class2, blit=False,\
-         interval=1, repeat=False)
-    ani_test_c1 = animation.FuncAnimation(fig, plot_testpoints_c1, gen_testpoints, blit=False,\
-         interval=1, repeat=False)
-    ani_test_c1 = animation.FuncAnimation(fig, plot_testpoints_c2, gen_testpoints, blit=False,\
+    ani_test = animation.FuncAnimation(fig, plot_testpoints, gen_testpoints, blit=False,\
          interval=1, repeat=False)
     clf.plot_boundary()
+    print "--TRAINING DATA--"
+    print "x_train is:"
+    print "Type:", type(x_train)
+    print "Shape:", x_train.shape
+    print "y_train is:"
+    print "Type:", type(y_train)
+    print "Shape:", y_train.shape, '\n'
+    print "--TESTING DATA--"
+    print "x_test is:"
+    print "Type:", type(x_test)
+    print "Shape:", x_test.shape
 
-    """ Plot test points and classify. Goes after decision boundary is drawn. """
-
-
-
-
+    # clf.plot_predictions(x_test, predictions) # use with plot_boundary(), not ani_..
     plt.show()
-
-    # # Visualize results and write to stdout
-    # clf.plot_boundary() ## refactor so can come before below
-    # clf.plot_predictions(x_test, predictions)
-    # print "--TRAINING DATA--"
-    # print "x_train is:"
-    # print "Type:", type(x_train)
-    # print "Shape:", x_train.shape
-    # print "y_train is:"
-    # print "Type:", type(y_train)
-    # print "Shape:", y_train.shape, '\n'
-    # print "--TESTING DATA--"
-    # print "x_test is:"
-    # print "Type:", type(x_test)
-    # print "Shape:", x_test.shape
