@@ -157,19 +157,44 @@ if __name__=="__main__":
         return line_c2
 
     def gen_testpoints(): # maybe go to a, b directly from multivariate normal
-        for e,f in zip(x_test[:,0], x_test[:,1]):
-            yield e,f
+        for e,f, idx, prediction in zip(x_test[:,0], x_test[:,1], 
+            predictions[:,0], predictions[:,1]):
+            yield e,f, idx, prediction
 
-    def plot_testpoints(gen_test):
-        s, t = gen_test[0], gen_test[1]
-        x_data_test.append(s)
-        y_data_test.append(t)
-        line_test.set_data(x_data_test, y_data_test)
-        return line_test
+    def plot_testpoints_c1(gen_test):
+        s, t, idx, predict = gen_test[0], gen_test[1], gen_test[2], gen_test[3]
+        if predict == 1:
+            x_data_test_c1.append(s)
+            y_data_test_c1.append(t)
+            line_test_c1.set_data(x_data_test_c1, y_data_test_c1)
+        return line_test_c1
+
+    def plot_testpoints_c2(gen_test):
+        u, v, idx, predict = gen_test[0], gen_test[1], gen_test[2], gen_test[3]
+        if predict == -1:
+            x_data_test_c2.append(u)
+            y_data_test_c2.append(v)
+            line_test_c2.set_data(x_data_test_c2, y_data_test_c2)
+        return line_test_c2
+
+    # Plots testpoints, colorcoding Blue/Red for classes 1/2 given predictions. 
+    # def plot_predictions(self, testpoints, predictions):
+    #     for idx, i in enumerate(testpoints):
+    #         if predictions[idx] >= 0: 
+    #             plt.scatter(i[0],i[1],color='b',marker='x')
+    #             plt.draw()
+    #             time.sleep(0.1)
+    #             plt.pause(0.0001)  
+    #         else:
+    #             plt.scatter(i[0],i[1],color='r',marker='x')
+    #             plt.draw()
+    #             time.sleep(0.1)
+    #             plt.pause(0.0001)  
 
     x_data_c1, y_data_c1 = [], []
     x_data_c2, y_data_c2 = [], []
-    x_data_test, y_data_test = [], []
+    x_data_test_c1, y_data_test_c1 = [], []
+    x_data_test_c2, y_data_test_c2 = [], []
 
     # plot_class1(x_train_c1, x_train_c2)
     fig = plt.figure()
@@ -181,7 +206,8 @@ if __name__=="__main__":
     plt.title('SVM Data Classification')
     line_c1, = ax.plot([], [], 'bo', ms=10)
     line_c2, = ax.plot([], [], 'ro', ms=10)
-    line_test, = ax.plot([], [], 'm+', ms=10)
+    line_test_c1, = ax.plot([], [], 'b+', ms=10)
+    line_test_c2, = ax.plot([], [], 'r+', ms=10)
 
     # # Train our SVM classifier
     clf = svm()
@@ -194,17 +220,16 @@ if __name__=="__main__":
     cov_test = [[1,0],[0,1]]
     a, b = np.random.multivariate_normal(mean_test, cov_test, n_test).T
     x_test = np.array([(a[i],b[i]) for i in xrange(n_test)])
-    predictions = clf.predict(x_test)
-
+    predictions = np.array([(idx, predict) for idx, predict in enumerate(clf.predict(x_test))])
     ani_c1 = animation.FuncAnimation(fig, plot_class1, gen_train_class1, blit=False,\
          interval=1, repeat=False)
     ani_c2 = animation.FuncAnimation(fig, plot_class2, gen_train_class2, blit=False,\
          interval=1, repeat=False)
-    ani_test = animation.FuncAnimation(fig, plot_testpoints, gen_testpoints, blit=False,\
+    ani_test_c1 = animation.FuncAnimation(fig, plot_testpoints_c1, gen_testpoints, blit=False,\
+         interval=1, repeat=False)
+    ani_test_c1 = animation.FuncAnimation(fig, plot_testpoints_c2, gen_testpoints, blit=False,\
          interval=1, repeat=False)
     clf.plot_boundary()
-    # clf.plot_predictions(x_test, predictions)
-
 
     """ Plot test points and classify. Goes after decision boundary is drawn. """
 
