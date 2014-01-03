@@ -225,6 +225,7 @@ if __name__ == "__main__":
     """ Example of data analysis/visualization with SVM. """
 
     # Cluster centers, covariance matrix, and # of training data points.
+    # You will have a total of n * 3 datapoints (training + test).
     cluster_centers = [[3, 3], [7,  7]]
     cov_matrix = [[0.6, 0], [0, 0.6]]
     n = 100
