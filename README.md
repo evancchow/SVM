@@ -8,5 +8,7 @@ Currently, this SVM only supports linearly separable datasets, and thus only has
 For now, though, this provides a simple demonstration of:
 
 1) Finding maximum-margin decision boundaries and supporting hyperplanes through convex optimization.
+
 2) Fitting a SVM to a set of linearly separable training datapoints, and predicting the labels of new ones (i.e. a test set in this implementation).
+
 3) Dynamically plotting the results using Matplotlib's animation module.
