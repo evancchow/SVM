@@ -5,7 +5,6 @@ sys.path.append('C:\Python27\Lib\site-packages')
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-
 from cvxopt import solvers, matrix
 
 class svm():
@@ -119,23 +118,20 @@ class svm():
                 plt.pause(0.0001)  
 
 if __name__=="__main__":
+    """ Example (w/visualization) of data analysis with above SVM. """
 
     # Generate n training data points (classes c1, c2) w/specified centers.
-    means_possible = [[2,2],[7,7],[5,-4]]
-    n = 30
+    means_possible = [[3,3],[7,7]]
+    n = 100
     mean_train_c1 = random.choice(means_possible)
     mean_train_c2 = random.choice([i for i in means_possible if i != mean_train_c1])
-    print "Means:", mean_train_c1, mean_train_c2
-    x_train_c1 = np.random.multivariate_normal(mean_train_c1,[[1,0],[0,1]],n)
+    print "Cluster centers:", mean_train_c1, mean_train_c2
+    x_train_c1 = np.random.multivariate_normal(mean_train_c1,[[0.6,0],[0,0.6]],n)
     y_train_c1 = np.ones(n)
-    x_train_c2 = np.random.multivariate_normal(mean_train_c2,[[1,0],[0,1]],n)
+    x_train_c2 = np.random.multivariate_normal(mean_train_c2,[[0.6,0],[0,0.6]],n)
     y_train_c2 = (np.ones(n) * -1)
     x_train = np.vstack((x_train_c1, x_train_c2))
     y_train = np.hstack((y_train_c1,y_train_c2))
-
-    print x_train_c1
-    # plot initial points
-    """ Example (w/visualization) of data analysis with above SVM. """
 
     # Plot training points. Classes +1 = blue, -1 = red
     def gen_train_class1():
@@ -144,10 +140,10 @@ if __name__=="__main__":
 
     def plot_class1(gen_train):
         x, y = gen_train[0], gen_train[1]
-        xdata.append(x)
-        ydata.append(y)
-        line.set_data(xdata, ydata)
-        return line
+        x_data_c1.append(x)
+        y_data_c1.append(y)
+        line_c1.set_data(x_data_c1, y_data_c1)
+        return line_c1
 
     def gen_train_class2():
         for c,d in zip(x_train_c2[:,0], x_train_c2[:,1]):
@@ -155,43 +151,67 @@ if __name__=="__main__":
 
     def plot_class2(gen_train):
         q, r = gen_train[0], gen_train[1]
-        xdata2.append(q)
-        ydata2.append(r)
-        line2.set_data(xdata2, ydata2)
-        return line2
+        x_data_c2.append(q)
+        y_data_c2.append(r)
+        line_c2.set_data(x_data_c2, y_data_c2)
+        return line_c2
 
-    xdata, ydata = [], []
-    xdata2, ydata2 = [], []
+    def gen_testpoints(): # maybe go to a, b directly from multivariate normal
+        for e,f in zip(x_test[:,0], x_test[:,1]):
+            yield e,f
+
+    def plot_testpoints(gen_test):
+        s, t = gen_test[0], gen_test[1]
+        x_data_test.append(s)
+        y_data_test.append(t)
+        line_test.set_data(x_data_test, y_data_test)
+        return line_test
+
+    x_data_c1, y_data_c1 = [], []
+    x_data_c2, y_data_c2 = [], []
+    x_data_test, y_data_test = [], []
 
     # plot_class1(x_train_c1, x_train_c2)
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    line, = ax.plot([], [], 'bo', ms=10)
-    line2, = ax.plot([], [], 'ro', ms=10)
-    ax.set_ylim(-10,10)
-    ax.set_xlim(0,20)
-
-    ani = animation.FuncAnimation(fig, plot_class1, gen_train_class1, blit=False,\
-         interval=1, repeat=False)
-    ani2 = animation.FuncAnimation(fig, plot_class2, gen_train_class2, blit=False,\
-         interval=1, repeat=False)
-
-
-    # plt.xlabel('X values')
-    # plt.ylabel('Y values')
+    ax.set_ylim(0,10)
+    ax.set_xlim(0,10)
+    plt.xlabel('X values')
+    plt.ylabel('Y values')
+    plt.title('SVM Data Classification')
+    line_c1, = ax.plot([], [], 'bo', ms=10)
+    line_c2, = ax.plot([], [], 'ro', ms=10)
+    line_test, = ax.plot([], [], 'm+', ms=10)
 
     # # Train our SVM classifier
-    # clf = svm()
-    # clf.fit(x_train, y_train)
-    # print "Weight vector: %s\nBias: %s" % (clf.w, clf.bias)
+    clf = svm()
+    clf.fit(x_train, y_train)
+    print "Weight vector: %s\nBias: %s" % (clf.w, clf.bias)
 
     # # Generate n test datapoints, centered at avg. of training centers.
-    # n_test = 100
-    # mean_test = 0.5 * np.add(mean_train_c1,mean_train_c2)
-    # cov_test = [[4,0],[0,4]]
-    # a, b = np.random.multivariate_normal(mean_test, cov_test, n_test).T
-    # x_test = np.array([(a[i],b[i]) for i in xrange(n_test)])
-    # predictions = clf.predict(x_test)
+    n_test = 30
+    mean_test = 0.5 * np.add(mean_train_c1,mean_train_c2)
+    cov_test = [[1,0],[0,1]]
+    a, b = np.random.multivariate_normal(mean_test, cov_test, n_test).T
+    x_test = np.array([(a[i],b[i]) for i in xrange(n_test)])
+    predictions = clf.predict(x_test)
+
+    ani_c1 = animation.FuncAnimation(fig, plot_class1, gen_train_class1, blit=False,\
+         interval=1, repeat=False)
+    ani_c2 = animation.FuncAnimation(fig, plot_class2, gen_train_class2, blit=False,\
+         interval=1, repeat=False)
+    ani_test = animation.FuncAnimation(fig, plot_testpoints, gen_testpoints, blit=False,\
+         interval=1, repeat=False)
+    clf.plot_boundary()
+    # clf.plot_predictions(x_test, predictions)
+
+
+    """ Plot test points and classify. Goes after decision boundary is drawn. """
+
+
+
+
+    plt.show()
 
     # # Visualize results and write to stdout
     # clf.plot_boundary() ## refactor so can come before below
@@ -207,5 +227,3 @@ if __name__=="__main__":
     # print "x_test is:"
     # print "Type:", type(x_test)
     # print "Shape:", x_test.shape
-
-    plt.show()
