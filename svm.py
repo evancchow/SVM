@@ -258,7 +258,7 @@ if __name__ == "__main__":
     ax.set_xlim(0, fig_limit)
     plt.xlabel('X values')
     plt.ylabel('Y values')
-    plt.title('SVM Data Classification')
+    plt.title('SVM Classification Demo')
     plot_c1_train, = ax.plot([], [], 'bo', ms=10)
     plot_c2_train, = ax.plot([], [], 'ro', ms=10)
     plot_c1_test, = ax.plot([], [], 'b+', ms=10)
