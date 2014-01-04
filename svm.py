@@ -75,11 +75,6 @@ class svm():
         self.x = np.array([i for idx, i in enumerate(x) if idx in self.a_ind])
         self.y = y[self.a_ind.astype(int)]
         
-        # Compute optimal w, the weights.
-        self.w = np.zeros((1, 2))
-        for i in xrange(len(self.a)):
-            self.w += self.a[i] * self.y[i] * x[self.a_ind[i]]
-        
         # Compute optimal b, the bias.
         self.bias = 0.0
         tf = [True if a > 1e-5 else False for a in alphas]
@@ -90,6 +85,11 @@ class svm():
             self.bias -= np.sum(self.a * self.y * tf_values)
         self.bias /= len(self.a)
         return
+        
+        # Compute optimal w, the weights.
+        self.w = np.zeros((1, 2))
+        for i in xrange(len(self.a)):
+            self.w += self.a[i] * self.y[i] * x[self.a_ind[i]]
         
     #######################################################################
     # predict(self, x)
