@@ -229,16 +229,20 @@ if __name__ == "__main__":
 
     # Cluster centers, covariance matrix, and # of training data points.
     # You will have a total of n * 4 datapoints (training + test).
+    # Feel free to change any of these 3 parameters. The SVM still plots 
+    # at 6000+ nodes on my system, albeit rather slowly.
     cluster_ctrs = [[3, 3], [7,  7]]
     cov_matrix = [[0.6, 0], [0, 0.6]]
     n = raw_input("Number of nodes for each class: ")
     if not n:
-        n = 100
-    n = int(n)
+        n = 100 # default value for blank raw_input
+    try:
+        n = int(n)
+    except ValueError:
+        raise Exception("# of nodes is not a integer")
 
     # Generate and format datapoints.
-    cluster_c1 = random.choice(cluster_ctrs)
-    cluster_c2 = random.choice([i for i in cluster_ctrs if i != cluster_c1])
+    cluster_c1, cluster_c2 = [i for i in cluster_ctrs]
     print "Cluster centers:", cluster_c1, cluster_c2
     x_train_c1 = np.random.multivariate_normal(cluster_c1, cov_matrix, n)
     y_train_c1 = np.ones(n)
