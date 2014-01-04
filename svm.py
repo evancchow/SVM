@@ -17,7 +17,6 @@
 
 import sys
 import random
-import time
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -110,6 +109,7 @@ class svm():
     # Plots the maximum-margin decision boundary, given the weights & bias
     # are already calculated for the SVM object. Also, plot_boundary plots
     # the supporting hyperplanes, which run through the support vectors.
+    # Decision boundary: black; supporting hyperplanes: dashed
     #######################################################################
 
     def plot_boundary(self):
@@ -225,14 +225,17 @@ if __name__ == "__main__":
     """ Example of data analysis/visualization with SVM. """
 
     # Cluster centers, covariance matrix, and # of training data points.
-    # You will have a total of n * 3 datapoints (training + test).
-    cluster_centers = [[3, 3], [7,  7]]
+    # You will have a total of n * 4 datapoints (training + test).
+    cluster_ctrs = [[3, 3], [7,  7]]
     cov_matrix = [[0.6, 0], [0, 0.6]]
-    n = 100
+    n = raw_input("Number of nodes for each class: ")
+    if not n:
+        n = 100
+    n = int(n)
 
     # Generate and format datapoints.
-    cluster_c1 = random.choice(cluster_centers)
-    cluster_c2 = random.choice([i for i in cluster_centers if i != cluster_c1])
+    cluster_c1 = random.choice(cluster_ctrs)
+    cluster_c2 = random.choice([i for i in cluster_ctrs if i != cluster_c1])
     print "Cluster centers:", cluster_c1, cluster_c2
     x_train_c1 = np.random.multivariate_normal(cluster_c1, cov_matrix, n)
     y_train_c1 = np.ones(n)
@@ -255,7 +258,7 @@ if __name__ == "__main__":
     # Set up figure.
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    fig_limit = np.sum(cluster_centers) / 2.0 # plot size scales to data
+    fig_limit = np.sum(cluster_ctrs) / 2.0 # plot size scales to data
     ax.set_ylim(0, fig_limit)
     ax.set_xlim(0, fig_limit)
     plt.xlabel('X values')
@@ -304,8 +307,8 @@ if __name__ == "__main__":
     print "Shape:\n", x_train.shape
     print "y_train is:"
     print "Type:", type(y_train)
-    print "Shape:\n", y_train.shape, '\n'
+    print "Shape:\n%s\n" % (y_train.shape)
     print "--TESTING DATA--"
     print "x_test is:"
     print "Type:", type(x_test)
-    print "Shape:", x_test.shape
+    print "Shape:\n%s\n" % (x_test.shape)
