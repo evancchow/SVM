@@ -22,9 +22,6 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from cvxopt import solvers, matrix
 
-# For my system, need to fix some path things
-# sys.path.append('C:\Python27\Lib\site-packages')
-
 
 class svm():
     """ A Support Vector Machine classifier object. """
@@ -35,7 +32,7 @@ class svm():
 
     # Initiate classifier object.
     def __init__(self, kernel=linear_k):
-        self.kernel=kernel
+        self.kernel = kernel
     
     #######################################################################
     # fit(self, x, y)
@@ -225,25 +222,102 @@ if __name__ == "__main__":
             plot_c2_test.set_data(xplt_test_c2, yplt_test_c2)
             return plot_c2_test
 
-    """ Example of data analysis/visualization with SVM. """
+    #######################################################################
+    # clust_input()
+    # Custom input for the training data cluster centers, i.e. where
+    # the avg of each class' data points will be.
+    #######################################################################
 
-    # Cluster centers, covariance matrix, and # of training data points.
-    # You will have a total of n * 4 datapoints (training + test).
-    # Feel free to change any of these 3 parameters. The SVM still plots 
-    # at 6000+ nodes on my system, albeit rather slowly.
-    cluster_ctrs = [[3, 3], [7,  7]]
-    cov_matrix = [[0.6, 0], [0, 0.6]]
-    n = raw_input("Number of nodes for each class: ")
-    if not n:
-        n = 100 # default value for blank raw_input
-    try:
-        n = int(n)
-    except ValueError:
-        raise Exception("# of nodes is not a integer")
+    def clust_input():
+        default = [[3, 3],[7, 7]]
+        while True:
+            clust_custom = raw_input("Enter custom cluster centers? [Y/n] ")
+            if clust_custom == "Y":
+                c1_x = raw_input("X-coordinate of class 1's center: ")
+                c1_y = raw_input("Y-coordinate of class 1's center: ")
+                c2_x = raw_input("X-coordinate of class 2's center: ")
+                c2_y = raw_input("Y-coordinate of class 2's center: ")
+                try:
+                    return [[float(x) for x in i] 
+                    for i in ([c1_x, c1_y],[c2_x, c2_y])]
+                except ValueError:
+                    if not c1_x or not c1_y or not c2_x or not c2_y:
+                        confirm = raw_input("You forgot to enter a value. "
+                                            "Continue with defaults? [Y/n] ")
+                        if confirm == "Y":
+                            return default
+                        else:
+                            print "Please try input again."
+                    else:
+                        print ("Sorry, one of the values was not a number. "
+                            "Please try input again.")
+            else:
+                    return default
+
+    #######################################################################
+    # cov_input()
+    # Custom input for the covariance matrix, which (basically) affects
+    # how spread out the training data will be.
+    #######################################################################
+
+    def cov_input():
+        default = [[0.6, 0], [0, 0.6]]
+        while True:
+            cov_custom = raw_input("Enter a custom covariance matrix? [Y/n] ")
+            if cov_custom == "Y":
+                print "Enter your matrix values 1-4 in format:"
+                print "[[1, 2]\n [3, 4]]"
+                m1 = raw_input("1: ")
+                m2 = raw_input("2: ")
+                m3 = raw_input("3: ")
+                m4 = raw_input("4: ")
+                try:
+                    return [[float(x) for x in i] for i in ([m1, m2],[m3, m4])]
+                except ValueError:
+                    if not m1 or not m2 or not m3 or not m4:
+                        confirm = raw_input("You forgot to enter a value. "
+                            "Continue with defaults? [Y/n] ")
+                        if confirm == "Y":
+                            return default
+                        else:
+                            print "Please try input again."
+                    else:
+                        print ("Sorry, one of the values was not a number. "
+                                "Please try input again.")
+            else:
+                return default
+
+    #######################################################################
+    # nodes_input()
+    # Custom input for number of nodes, i.e. data points for an individual
+    # class. Because there are two classes for both the training and
+    # testing data, you'll end up with n * 4 datapoints.
+    #######################################################################
+
+    def nodes_input():
+        default = 100
+        while True:
+            node_custom = raw_input("Enter custom # of nodes? [Y/n] ")
+            if node_custom == "Y":
+                n = raw_input("Number of nodes: ")
+                try:
+                    return int(n)
+                except ValueError:
+                    print "Input was not a number; please try again."
+            else:
+                return default
+
+    """ Example of data analysis/visualization with SVM. """
+    
+    cluster_ctrs = clust_input()
+    cov_matrix = cov_input()
+    n = nodes_input()
 
     # Generate and format datapoints.
     cluster_c1, cluster_c2 = [i for i in cluster_ctrs]
     print "Cluster centers:", cluster_c1, cluster_c2
+    print "Covariance matrix", cov_matrix
+    print "Number of nodes", n
     x_train_c1 = np.random.multivariate_normal(cluster_c1, cov_matrix, n)
     y_train_c1 = np.ones(n)
     x_train_c2 = np.random.multivariate_normal(cluster_c2, cov_matrix, n)
