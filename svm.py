@@ -309,6 +309,7 @@ if __name__ == "__main__":
 
     """ Example of data analysis/visualization with SVM. """
     
+    print "If you just want a quick SVM demo, leave the following blank."
     cluster_ctrs = clust_input()
     cov_matrix = cov_input()
     n = nodes_input()
@@ -338,6 +339,7 @@ if __name__ == "__main__":
 
     # Set up figure.
     fig = plt.figure()
+    fig.patch.set_facecolor('white')
     ax = fig.add_subplot(111)
     fig_limit = np.sum(cluster_ctrs) / 2.0 # plot size scales to data
     ax.set_ylim(0, fig_limit)
