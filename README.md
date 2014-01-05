@@ -7,11 +7,11 @@ Currently, this SVM only supports linearly separable datasets, and thus only has
 
 1) Finding maximum-margin decision boundaries and supporting hyperplanes through convex optimization.
 
-2) Fitting the SVM to a linearly separable training dataset, and predicting the labels of a testing dataset.
+2) Fitting the SVM to a linearly separable training dataset, and predicting the labels of a testing dataset. All data is randomly generated using NumPy's random.multivariate_normal() function.
 
 3) Dynamically plotting the results using Matplotlib's animation module. I'd like to upgrade the animation later to a higher-quality library such as NodeBox for OpenGL, Seaborn, etc.
 
-A PNG of the output with 150 data points (for each class, making a total of 600 for train/test) can be found here:
+A PNG of one possible output with 150 data points (for each class, making a total of 600 for train/test) can be found here:
 https://www.dropbox.com/s/0h4xhtgtb06vvam/n150_svm.png
 
 I also found Mathieu Blondel's SVM implementation (https://gist.github.com/mblondel/586753) in implementing the weights and bias calculations involved in the convex optimization. 
