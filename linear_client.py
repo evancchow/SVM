@@ -15,7 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from cvxopt import solvers, matrix
-from svm import svm # my SVM
+from svm import svm # SVM programmed in svm.py
 
 
 ###########################################################################
