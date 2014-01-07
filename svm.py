@@ -12,6 +12,8 @@
 #   (https://gist.github.com/mblondel/586753) helpful in calculating
 #   the weights and bias for the SVM's fit() function.
 # Python packages used: NumPy, Matplotlib, CVXOPT
+# How to run: Import the class svm from this module. A sample client
+#   client program is in linear_client.py.
 ###########################################################################
 
 
