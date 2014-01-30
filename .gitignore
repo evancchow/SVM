@@ -1,0 +1,7 @@
+# Ignore everything
+*
+
+# except
+!.gitignore
+!linear_client.py
+!svm.py
